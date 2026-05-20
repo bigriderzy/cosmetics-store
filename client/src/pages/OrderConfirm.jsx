@@ -1,0 +1,1 @@
+export default function OrderConfirm() { return <div className='p-4'>OrderConfirm</div>; }

@@ -1,0 +1,1 @@
+export default function AdminProductEdit() { return <div className='p-4'>AdminProductEdit</div>; }

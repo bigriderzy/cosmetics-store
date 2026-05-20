@@ -1,0 +1,1 @@
+export default function AdminLayout() { return <div className='p-4'>AdminLayout</div>; }
