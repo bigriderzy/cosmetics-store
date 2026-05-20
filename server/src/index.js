@@ -14,6 +14,9 @@ app.use('/api/products', productRoutes);
 import orderRoutes from './routes/orders.js';
 app.use('/api/orders', orderRoutes);
 
+import adminRoutes from './routes/admin.js';
+app.use('/api/admin', adminRoutes);
+
 // Initialize database on startup
 getDb();
 
