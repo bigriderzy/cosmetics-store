@@ -1,1 +1,142 @@
-export default function AdminProductEdit() { return <div className='p-4'>AdminProductEdit</div>; }
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { api } from '../utils/api';
+
+export default function AdminProductEdit() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isNew = !id;
+
+  const [form, setForm] = useState({
+    name: '', description: '', price: '', original_price: '',
+    images: '', stock: '0', category: '', status: 'active',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!isNew) {
+      api.getProduct(id).then(product => {
+        setForm({
+          name: product.name,
+          description: product.description || '',
+          price: String(product.price),
+          original_price: product.original_price ? String(product.original_price) : '',
+          images: Array.isArray(product.images) ? product.images.join('\n') : '',
+          stock: String(product.stock),
+          category: product.category || '',
+          status: product.status,
+        });
+      });
+    }
+  }, [id]);
+
+  const handleChange = (field) => (e) => {
+    setForm(prev => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name || !form.price) {
+      setError('商品名称和价格不能为空');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    const data = {
+      name: form.name,
+      description: form.description,
+      price: parseFloat(form.price),
+      original_price: form.original_price ? parseFloat(form.original_price) : null,
+      images: form.images ? form.images.split('\n').map(s => s.trim()).filter(Boolean) : [],
+      stock: parseInt(form.stock) || 0,
+      category: form.category,
+      status: form.status,
+    };
+
+    try {
+      if (isNew) {
+        await api.createProduct(data);
+      } else {
+        await api.updateProduct(id, data);
+      }
+      navigate('/admin/products');
+    } catch (e) {
+      setError(e.message);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <h2 className="text-lg font-bold mb-4">{isNew ? '新增商品' : '编辑商品'}</h2>
+
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg p-4 space-y-4">
+        {error && <div className="p-2 bg-red-50 text-red-500 text-sm rounded">{error}</div>}
+
+        <div>
+          <label className="text-xs text-gray-500">商品名称 *</label>
+          <input type="text" value={form.name} onChange={handleChange('name')} placeholder="商品名称"
+            className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs text-gray-500">售价 *</label>
+            <input type="number" step="0.01" value={form.price} onChange={handleChange('price')} placeholder="29.9"
+              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500" />
+          </div>
+          <div>
+            <label className="text-xs text-gray-500">原价</label>
+            <input type="number" step="0.01" value={form.original_price} onChange={handleChange('original_price')} placeholder="99.0"
+              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs text-gray-500">库存数量</label>
+            <input type="number" value={form.stock} onChange={handleChange('stock')}
+              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500" />
+          </div>
+          <div>
+            <label className="text-xs text-gray-500">分类</label>
+            <input type="text" value={form.category} onChange={handleChange('category')} placeholder="如：口红、面膜"
+              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500" />
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs text-gray-500">图片（每行一个 URL）</label>
+          <textarea value={form.images} onChange={handleChange('images')} placeholder="https://example.com/img1.jpg&#10;https://example.com/img2.jpg"
+            rows={3} className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500 resize-none" />
+        </div>
+
+        <div>
+          <label className="text-xs text-gray-500">描述</label>
+          <textarea value={form.description} onChange={handleChange('description')} placeholder="商品详情描述"
+            rows={4} className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500 resize-none" />
+        </div>
+
+        {!isNew && (
+          <div>
+            <label className="text-xs text-gray-500">状态</label>
+            <select value={form.status} onChange={handleChange('status')}
+              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500">
+              <option value="active">在售</option>
+              <option value="sold_out">售罄</option>
+              <option value="hidden">隐藏</option>
+            </select>
+          </div>
+        )}
+
+        <button type="submit" disabled={loading}
+          className="w-full py-2.5 bg-pink-500 text-white rounded-full font-medium active:bg-pink-600 disabled:bg-gray-300">
+          {loading ? '保存中...' : '保存'}
+        </button>
+      </form>
+    </div>
+  );
+}
