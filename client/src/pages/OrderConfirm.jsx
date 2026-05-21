@@ -9,7 +9,7 @@ export default function OrderConfirm() {
   const [qrcode, setQrcode] = useState('');
 
   useEffect(() => {
-    api.getSettings().then(s => {
+    api.getPublicSettings().then(s => {
       if (s.payment_qrcode) setQrcode(s.payment_qrcode);
     }).catch(() => {});
   }, [id]);

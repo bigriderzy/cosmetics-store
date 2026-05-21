@@ -38,4 +38,8 @@ export const api = {
   updateProductStatus: (id, status) => request(`/admin/products/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
   getSettings: () => request('/admin/settings'),
   updateSettings: (data) => request('/admin/settings', { method: 'PUT', body: JSON.stringify(data) }),
+
+  // Public
+  getPublicSettings: () => request('/public/settings'),
+  getOrdersByPhone: (phone) => request(`/public/orders?phone=${encodeURIComponent(phone)}`),
 };
