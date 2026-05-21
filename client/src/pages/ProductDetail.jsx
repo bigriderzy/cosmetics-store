@@ -30,7 +30,7 @@ export default function ProductDetail() {
 
   const handleBuyNow = () => {
     addItem(product, qty);
-    navigate('/cart');
+    navigate('/checkout');
   };
 
   return (
