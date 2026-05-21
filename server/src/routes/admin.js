@@ -1,6 +1,33 @@
 import { Router } from 'express';
+import multer from 'multer';
+import path from 'path';
+import crypto from 'crypto';
+import { fileURLToPath } from 'url';
 import { getDb } from '../db.js';
 import { requireAuth, createToken } from '../middleware.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadDir = path.join(__dirname, '..', '..', 'uploads');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `${crypto.randomUUID()}${ext}`);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (/\.(jpg|jpeg|png|gif|webp)$/i.test(path.extname(file.originalname))) {
+      cb(null, true);
+    } else {
+      cb(new Error('仅支持 jpg/png/gif/webp 格式'));
+    }
+  },
+});
 
 const router = Router();
 
@@ -201,6 +228,12 @@ router.put('/settings', requireAuth, (req, res) => {
   update();
 
   res.json({ success: true });
+});
+
+// POST /api/admin/upload
+router.post('/upload', requireAuth, upload.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: '请选择文件' });
+  res.json({ url: `/uploads/${req.file.filename}` });
 });
 
 export default router;

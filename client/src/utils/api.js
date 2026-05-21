@@ -42,4 +42,17 @@ export const api = {
   // Public
   getPublicSettings: () => request('/public/settings'),
   getOrdersByPhone: (phone) => request(`/public/orders?phone=${encodeURIComponent(phone)}`),
+
+  // Upload
+  uploadImage: async (file) => {
+    const token = localStorage.getItem('admin_token');
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch('/api/admin/upload', { method: 'POST', headers, body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '上传失败');
+    return data.url;
+  },
 };

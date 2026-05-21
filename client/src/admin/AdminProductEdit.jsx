@@ -13,16 +13,21 @@ export default function AdminProductEdit() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadedUrls, setUploadedUrls] = useState([]);
 
   useEffect(() => {
     if (!isNew) {
       api.getProduct(id).then(product => {
+        const uploaded = Array.isArray(product.images) ? product.images.filter(u => u.startsWith('/uploads/')) : [];
+        const external = Array.isArray(product.images) ? product.images.filter(u => !u.startsWith('/uploads/')) : [];
+        setUploadedUrls(uploaded);
         setForm({
           name: product.name,
           description: product.description || '',
           price: String(product.price),
           original_price: product.original_price ? String(product.original_price) : '',
-          images: Array.isArray(product.images) ? product.images.join('\n') : '',
+          images: external.join('\n'),
           stock: String(product.stock),
           category: product.category || '',
           status: product.status,
@@ -33,6 +38,25 @@ export default function AdminProductEdit() {
 
   const handleChange = (field) => (e) => {
     setForm(prev => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleFileSelect = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setUploading(true);
+    setError('');
+    try {
+      const urls = await Promise.all(files.map(f => api.uploadImage(f)));
+      setUploadedUrls(prev => [...prev, ...urls]);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeUploadedUrl = (index) => {
+    setUploadedUrls(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -50,7 +74,10 @@ export default function AdminProductEdit() {
       description: form.description,
       price: parseFloat(form.price),
       original_price: form.original_price ? parseFloat(form.original_price) : null,
-      images: form.images ? form.images.split('\n').map(s => s.trim()).filter(Boolean) : [],
+      images: [
+        ...uploadedUrls,
+        ...(form.images ? form.images.split('\n').map(s => s.trim()).filter(Boolean) : []),
+      ],
       stock: parseInt(form.stock) || 0,
       category: form.category,
       status: form.status,
@@ -109,8 +136,33 @@ export default function AdminProductEdit() {
         </div>
 
         <div>
-          <label className="text-xs text-gray-500">图片（每行一个 URL）</label>
-          <textarea value={form.images} onChange={handleChange('images')} placeholder="https://example.com/img1.jpg&#10;https://example.com/img2.jpg"
+          <label className="text-xs text-gray-500">上传图片</label>
+          {/* Uploaded images preview */}
+          {uploadedUrls.length > 0 && (
+            <div className="flex gap-2 flex-wrap mt-1 mb-2">
+              {uploadedUrls.map((url, i) => (
+                <div key={i} className="relative w-20 h-20">
+                  <img src={url} alt="" className="w-full h-full object-cover rounded-lg" />
+                  <button type="button" onClick={() => removeUploadedUrl(i)}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center leading-none">×</button>
+                </div>
+              ))}
+            </div>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileSelect}
+            disabled={uploading}
+            className="w-full mt-1 text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-sm file:bg-pink-50 file:text-pink-600"
+          />
+          {uploading && <span className="text-xs text-gray-400 mt-1 inline-block">上传中...</span>}
+        </div>
+
+        <div>
+          <label className="text-xs text-gray-500">或粘贴图片 URL（每行一个）</label>
+          <textarea value={form.images} onChange={handleChange('images')} placeholder={"https://example.com/img1.jpg\nhttps://example.com/img2.jpg"}
             rows={3} className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500 resize-none" />
         </div>
 
