@@ -5,6 +5,7 @@ export default function AdminSettings() {
   const [paymentQrcode, setPaymentQrcode] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
@@ -13,6 +14,21 @@ export default function AdminSettings() {
       if (s.payment_qrcode) setPaymentQrcode(s.payment_qrcode);
     }).catch(() => {});
   }, []);
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const url = await api.uploadImage(file);
+      setPaymentQrcode(url);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,14 +61,20 @@ export default function AdminSettings() {
         {saved && <div className="p-2 bg-green-50 text-green-600 text-sm rounded">设置已保存</div>}
 
         <div>
-          <label className="text-xs text-gray-500">收款二维码 URL</label>
-          <input
-            type="text"
-            value={paymentQrcode}
-            onChange={e => setPaymentQrcode(e.target.value)}
-            placeholder="输入收款码图片的 URL 地址"
-            className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500"
-          />
+          <label className="text-xs text-gray-500">收款二维码</label>
+          <div className="flex gap-2 mt-1">
+            <input
+              type="text"
+              value={paymentQrcode}
+              onChange={e => setPaymentQrcode(e.target.value)}
+              placeholder="粘贴收款码图片 URL 或点击右侧按钮上传"
+              className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500"
+            />
+            <label className={`px-4 py-2 rounded-lg text-sm font-medium cursor-pointer active:opacity-80 ${uploading ? 'bg-gray-300 text-white' : 'bg-pink-50 text-pink-600'}`}>
+              {uploading ? '上传中' : '选择图片'}
+              <input type="file" accept="image/*" onChange={handleFileSelect} disabled={uploading} className="hidden" />
+            </label>
+          </div>
           {paymentQrcode && (
             <div className="mt-2 p-2 border rounded-lg inline-block">
               <img src={paymentQrcode} alt="收款码预览" className="w-32 h-32 object-contain" />

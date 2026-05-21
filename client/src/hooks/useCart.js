@@ -19,21 +19,25 @@ export function useCart() {
   const addItem = useCallback((product, qty = 1) => {
     setItems(prev => {
       const existing = prev.find(item => item.product_id === product.id);
+      let next;
       if (existing) {
-        return prev.map(item =>
+        next = prev.map(item =>
           item.product_id === product.id
             ? { ...item, qty: Math.min(item.qty + qty, product.stock) }
             : item
         );
+      } else {
+        next = [...prev, {
+          product_id: product.id,
+          name: product.name,
+          price: product.price,
+          image: Array.isArray(product.images) ? product.images[0] : '',
+          qty,
+          stock: product.stock,
+        }];
       }
-      return [...prev, {
-        product_id: product.id,
-        name: product.name,
-        price: product.price,
-        image: Array.isArray(product.images) ? product.images[0] : '',
-        qty,
-        stock: product.stock,
-      }];
+      localStorage.setItem('cart', JSON.stringify(next));
+      return next;
     });
   }, []);
 

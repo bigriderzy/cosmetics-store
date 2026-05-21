@@ -7,7 +7,7 @@ import { getDb } from '../db.js';
 import { requireAuth, createToken } from '../middleware.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadDir = path.join(__dirname, '..', '..', 'uploads');
+const uploadDir = process.env.UPLOADS_DIR || path.join(__dirname, '..', '..', 'uploads');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
@@ -118,6 +118,28 @@ router.patch('/orders/:id/status', requireAuth, (req, res) => {
     db.prepare("UPDATE orders SET status = ?, updated_at = datetime('now','localtime') WHERE id = ?")
       .run(status, req.params.id);
   }
+
+  res.json({ success: true });
+});
+
+// DELETE /api/admin/orders/:id
+router.delete('/orders/:id', requireAuth, (req, res) => {
+  const db = getDb();
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
+  if (!order) {
+    return res.status(404).json({ error: '订单不存在' });
+  }
+
+  db.transaction(() => {
+    if (order.status !== 'cancelled') {
+      const items = JSON.parse(order.items);
+      for (const item of items) {
+        db.prepare('UPDATE products SET stock = stock + ?, status = CASE WHEN stock + ? > 0 THEN \'active\' ELSE status END, updated_at = datetime(\'now\',\'localtime\') WHERE id = ?')
+          .run(item.qty, item.qty, item.product_id);
+      }
+    }
+    db.prepare('DELETE FROM orders WHERE id = ?').run(req.params.id);
+  })();
 
   res.json({ success: true });
 });

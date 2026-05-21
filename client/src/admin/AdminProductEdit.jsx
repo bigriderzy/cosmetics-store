@@ -130,8 +130,30 @@ export default function AdminProductEdit() {
           </div>
           <div>
             <label className="text-xs text-gray-500">分类</label>
-            <input type="text" value={form.category} onChange={handleChange('category')} placeholder="如：口红、面膜"
-              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500" />
+            <select value={form.category} onChange={handleChange('category')}
+              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-pink-500">
+              <option value="">选择分类</option>
+              <option value="口红">口红</option>
+              <option value="唇釉">唇釉</option>
+              <option value="面膜">面膜</option>
+              <option value="眼影">眼影</option>
+              <option value="粉底">粉底</option>
+              <option value="腮红">腮红</option>
+              <option value="眉笔/眉粉">眉笔/眉粉</option>
+              <option value="眼线">眼线</option>
+              <option value="睫毛膏">睫毛膏</option>
+              <option value="卸妆">卸妆</option>
+              <option value="精华">精华</option>
+              <option value="面霜/乳液">面霜/乳液</option>
+              <option value="防晒">防晒</option>
+              <option value="BB霜/CC霜">BB霜/CC霜</option>
+              <option value="散粉/蜜粉">散粉/蜜粉</option>
+              <option value="遮瑕">遮瑕</option>
+              <option value="妆前乳">妆前乳</option>
+              <option value="化妆工具">化妆工具</option>
+              <option value="套装">套装</option>
+              <option value="其他">其他</option>
+            </select>
           </div>
         </div>
 

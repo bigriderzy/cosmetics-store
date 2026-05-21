@@ -31,6 +31,7 @@ export const api = {
   getDashboard: () => request('/admin/dashboard'),
   getAdminOrders: (params) => request(`/admin/orders?${new URLSearchParams(params)}`),
   updateOrderStatus: (id, status) => request(`/admin/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  deleteOrder: (id) => request(`/admin/orders/${id}`, { method: 'DELETE' }),
   getAdminProducts: () => request('/admin/products'),
   createProduct: (data) => request('/admin/products', { method: 'POST', body: JSON.stringify(data) }),
   updateProduct: (id, data) => request(`/admin/products/${id}`, { method: 'PUT', body: JSON.stringify(data) }),

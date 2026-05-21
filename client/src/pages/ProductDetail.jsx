@@ -29,6 +29,19 @@ export default function ProductDetail() {
   };
 
   const handleBuyNow = () => {
+    // 先同步写入 localStorage，确保 Checkout 页面能读到
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const idx = cart.findIndex(item => item.product_id === product.id);
+    if (idx >= 0) {
+      cart[idx].qty = Math.min(cart[idx].qty + qty, product.stock);
+    } else {
+      cart.push({
+        product_id: product.id, name: product.name, price: product.price,
+        image: Array.isArray(product.images) ? product.images[0] : '',
+        qty, stock: product.stock,
+      });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
     addItem(product, qty);
     navigate('/checkout');
   };

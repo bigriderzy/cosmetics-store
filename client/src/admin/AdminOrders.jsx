@@ -94,26 +94,34 @@ export default function AdminOrders() {
               <div className="text-xs text-gray-400 mt-1">{order.created_at}</div>
 
               {/* Action buttons */}
-              {STATUS_FLOW[order.status]?.length > 0 && (
-                <div className="flex gap-2 mt-3">
-                  {STATUS_FLOW[order.status].map(nextStatus => (
-                    <button
-                      key={nextStatus}
-                      onClick={() => handleStatusChange(order.id, nextStatus)}
-                      className={`text-xs px-3 py-1 rounded-full ${
-                        nextStatus === 'cancelled'
-                          ? 'border border-gray-300 text-gray-500'
-                          : 'bg-pink-500 text-white'
-                      }`}
-                    >
-                      {nextStatus === 'paid' ? '确认收款' :
-                       nextStatus === 'shipped' ? '标记发货' :
-                       nextStatus === 'completed' ? '完成' :
-                       nextStatus === 'cancelled' ? '取消' : nextStatus}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <div className="flex gap-2 mt-3 flex-wrap">
+                {STATUS_FLOW[order.status]?.length > 0 && STATUS_FLOW[order.status].map(nextStatus => (
+                  <button
+                    key={nextStatus}
+                    onClick={() => handleStatusChange(order.id, nextStatus)}
+                    className={`text-xs px-3 py-1 rounded-full ${
+                      nextStatus === 'cancelled'
+                        ? 'border border-gray-300 text-gray-500'
+                        : 'bg-pink-500 text-white'
+                    }`}
+                  >
+                    {nextStatus === 'paid' ? '确认收款' :
+                     nextStatus === 'shipped' ? '标记发货' :
+                     nextStatus === 'completed' ? '完成' :
+                     nextStatus === 'cancelled' ? '取消' : nextStatus}
+                  </button>
+                ))}
+                <button
+                  onClick={() => {
+                    if (window.confirm('确定删除此订单吗？')) {
+                      api.deleteOrder(order.id).then(() => fetchOrders()).catch(e => alert(e.message));
+                    }
+                  }}
+                  className="text-xs px-3 py-1 rounded-full border border-red-300 text-red-500"
+                >
+                  删除
+                </button>
+              </div>
             </div>
           ))}
         </div>
