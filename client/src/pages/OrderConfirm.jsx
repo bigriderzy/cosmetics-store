@@ -69,6 +69,12 @@ export default function OrderConfirm() {
       >
         继续逛逛
       </Link>
+      <Link
+        to="/orders"
+        className="block text-center mt-3 py-2.5 border border-pink-500 text-pink-600 rounded-full font-medium text-sm active:bg-pink-50"
+      >
+        查看我的订单
+      </Link>
     </div>
   );
 }

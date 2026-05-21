@@ -4,6 +4,7 @@ import Checkout from './pages/Checkout';
 import OrderConfirm from './pages/OrderConfirm';
 import ProductDetail from './pages/ProductDetail';
 import ProductList from './pages/ProductList';
+import OrderLookup from './pages/OrderLookup';
 import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminOrders from './admin/AdminOrders';
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order/:id" element={<OrderConfirm />} />
+        <Route path="/orders" element={<OrderLookup />} />
 
         {/* Admin routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
