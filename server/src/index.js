@@ -17,6 +17,9 @@ app.use('/api/orders', orderRoutes);
 import adminRoutes from './routes/admin.js';
 app.use('/api/admin', adminRoutes);
 
+import publicRoutes from './routes/public.js';
+app.use('/api/public', publicRoutes);
+
 // Initialize database on startup
 getDb();
 
