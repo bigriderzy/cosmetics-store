@@ -9,6 +9,7 @@ import AdminDashboard from './admin/AdminDashboard';
 import AdminOrders from './admin/AdminOrders';
 import AdminProducts from './admin/AdminProducts';
 import AdminProductEdit from './admin/AdminProductEdit';
+import AdminSettings from './admin/AdminSettings';
 import AdminLayout from './admin/AdminLayout';
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="products/new" element={<AdminProductEdit />} />
           <Route path="products/:id/edit" element={<AdminProductEdit />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Routes>
     </div>

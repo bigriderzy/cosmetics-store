@@ -26,6 +26,7 @@ export default function AdminLayout() {
     { path: '/admin', label: '概览', exact: true },
     { path: '/admin/orders', label: '订单' },
     { path: '/admin/products', label: '商品' },
+    { path: '/admin/settings', label: '设置' },
   ];
 
   const isActive = (tab) => tab.exact ? location.pathname === '/admin' : location.pathname.startsWith(tab.path);
