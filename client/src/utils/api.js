@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 async function request(path, options = {}) {
   const token = localStorage.getItem('admin_token');
@@ -51,7 +51,7 @@ export const api = {
     if (token) headers['Authorization'] = `Bearer ${token}`;
     const formData = new FormData();
     formData.append('file', file);
-    const res = await fetch('/api/admin/upload', { method: 'POST', headers, body: formData });
+    const res = await fetch(`${API_BASE}/admin/upload`, { method: 'POST', headers, body: formData });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || '上传失败');
     return data.url;
