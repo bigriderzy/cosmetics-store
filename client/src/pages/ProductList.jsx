@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { api } from '../utils/api';
+import { api, resolveImageUrl } from '../utils/api';
 import { useCart } from '../hooks/useCart';
 
 export default function ProductList() {
@@ -33,7 +33,9 @@ export default function ProductList() {
       <header className="sticky top-0 z-10 bg-white shadow-sm">
         <div className="flex items-center justify-between px-4 py-3">
           <h1 className="text-lg font-bold text-pink-600">尾货化妆品甩卖</h1>
-          <Link to="/cart" className="relative">
+          <div className="flex items-center gap-4">
+            <Link to="/orders" className="text-sm text-gray-500">我的订单</Link>
+            <Link to="/cart" className="relative">
             <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
@@ -43,6 +45,7 @@ export default function ProductList() {
               </span>
             )}
           </Link>
+          </div>
         </div>
 
         {/* Category filter */}
@@ -80,7 +83,7 @@ export default function ProductList() {
             >
               <div className="aspect-square bg-gray-100">
                 {product.images[0] ? (
-                  <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                  <img src={resolveImageUrl(product.images[0])} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">暂无图片</div>
                 )}

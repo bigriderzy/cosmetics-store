@@ -1,6 +1,6 @@
 import { useParams, useLocation, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { api } from '../utils/api';
+import { api, resolveImageUrl } from '../utils/api';
 
 export default function OrderConfirm() {
   const { id } = useParams();
@@ -53,7 +53,7 @@ export default function OrderConfirm() {
       <div className="bg-white rounded-lg p-4 mt-4 text-center">
         <h2 className="text-sm font-medium text-gray-600 mb-3">请扫码付款</h2>
         {qrcode ? (
-          <img src={qrcode} alt="收款码" className="w-48 h-48 mx-auto" />
+          <img src={resolveImageUrl(qrcode)} alt="收款码" className="w-48 h-48 mx-auto" />
         ) : (
           <div className="w-48 h-48 mx-auto bg-gray-100 rounded flex items-center justify-center text-gray-400 text-sm">
             收款码待设置

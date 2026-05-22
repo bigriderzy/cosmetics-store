@@ -1,4 +1,17 @@
 const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api';
+const UPLOADS_BASE = import.meta.env.VITE_API_URL || '';
+
+// 解析图片 URL：相对路径（/uploads/xxx）在线上需补全为 Railway 地址
+export function resolveImageUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url;
+  }
+  if (url.startsWith('/') && UPLOADS_BASE) {
+    return UPLOADS_BASE + url;
+  }
+  return url;
+}
 
 async function request(path, options = {}) {
   const token = localStorage.getItem('admin_token');

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { api } from '../utils/api';
+import { api, resolveImageUrl } from '../utils/api';
 import { useCart } from '../hooks/useCart';
 
 export default function ProductDetail() {
@@ -59,7 +59,7 @@ export default function ProductDetail() {
       <div className="aspect-square bg-gray-100 relative">
         {images.length > 0 ? (
           <>
-            <img src={images[selectedImage]} alt={product.name} className="w-full h-full object-cover" />
+            <img src={resolveImageUrl(images[selectedImage])} alt={product.name} className="w-full h-full object-cover" />
             {images.length > 1 && (
               <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1">
                 {images.map((_, i) => (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { api } from '../utils/api';
+import { api, resolveImageUrl } from '../utils/api';
 
 export default function AdminProductEdit() {
   const { id } = useParams();
@@ -164,7 +164,7 @@ export default function AdminProductEdit() {
             <div className="flex gap-2 flex-wrap mt-1 mb-2">
               {uploadedUrls.map((url, i) => (
                 <div key={i} className="relative w-20 h-20">
-                  <img src={url} alt="" className="w-full h-full object-cover rounded-lg" />
+                  <img src={resolveImageUrl(url)} alt="" className="w-full h-full object-cover rounded-lg" />
                   <button type="button" onClick={() => removeUploadedUrl(i)}
                     className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center leading-none">×</button>
                 </div>

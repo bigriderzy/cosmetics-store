@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { api } from '../utils/api';
+import { api, resolveImageUrl } from '../utils/api';
 
 export default function AdminSettings() {
   const [paymentQrcode, setPaymentQrcode] = useState('');
@@ -77,7 +77,7 @@ export default function AdminSettings() {
           </div>
           {paymentQrcode && (
             <div className="mt-2 p-2 border rounded-lg inline-block">
-              <img src={paymentQrcode} alt="收款码预览" className="w-32 h-32 object-contain" />
+              <img src={resolveImageUrl(paymentQrcode)} alt="收款码预览" className="w-32 h-32 object-contain" />
             </div>
           )}
         </div>
