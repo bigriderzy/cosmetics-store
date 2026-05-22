@@ -1,0 +1,7 @@
+{
+  "name": "cosmetics-store",
+  "private": true,
+  "engines": {
+    "node": "22"
+  }
+}
